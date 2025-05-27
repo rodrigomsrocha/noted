@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:noted/features/home/presentation/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final _emailController = TextEditingController();
@@ -163,9 +166,33 @@ class LoginScreen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            String message = '';
                             if (_formKey.currentState!.validate()) {
-                              // Add login logic
+                              try {
+                                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                                  email: _emailController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                );
+                                Future.delayed(const Duration(seconds: 3), () {
+                                  print('success');
+                                  Navigator.pushReplacementNamed(context, '/home');
+                                });
+                              } on FirebaseAuthException catch (e) {
+                                if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+                                  message = 'Invalid login credentials.';
+                                } else {
+                                  message = e.code;
+                                }
+                                Fluttertoast.showToast(
+                                  msg: message,
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.SNACKBAR,
+                                  backgroundColor: Colors.black54,
+                                  textColor: Colors.white,
+                                  fontSize: 14.0,
+                                );
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(

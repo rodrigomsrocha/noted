@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "8427053870",
+    "project_id": "noted-3640a",
+    "storage_bucket": "noted-3640a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8427053870:android:db73c2c15a5bd8767d90bf",
+        "android_client_info": {
+          "package_name": "com.example.noted"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSH624pho4HyLPlyvRCcm8eOq12z9lagA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

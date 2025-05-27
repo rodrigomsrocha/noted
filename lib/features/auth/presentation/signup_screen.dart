@@ -1,9 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:noted/features/home/presentation/home_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignupScreen extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  final _firebaseAuth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
 
   SignupScreen({super.key});
@@ -155,7 +160,7 @@ class SignupScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
-                        controller: _passwordController,
+                        controller: _confirmPasswordController,
                         style: const TextStyle(color: Colors.white),
                         obscureText: true,
                         decoration: InputDecoration(
@@ -176,6 +181,9 @@ class SignupScreen extends StatelessWidget {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';
                           }
+                          if (value != _passwordController.text) {
+                            return 'Passwords do not match';
+                          }
                           return null;
                         },
                       ),
@@ -185,9 +193,41 @@ class SignupScreen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            String message = '';
                             if (_formKey.currentState!.validate()) {
-                              // Add login logic
+                              try {
+                                await _firebaseAuth.createUserWithEmailAndPassword( // instantiated earlier on: final _firebaseAuth = FirebaseAuth.instance;
+                                  email: _emailController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                );
+                                Future.delayed(const Duration(seconds: 3), () {
+                                  Navigator.pushReplacementNamed(context, '/home');
+                                });
+                              } on FirebaseAuthException catch (e) {
+                                if (e.code == 'weak-password') {
+                                  message = 'The password provided is too weak.';
+                                } else if (e.code == 'email-already-in-use') {
+                                  message = 'An account already exists with that email.';
+                                }
+                                Fluttertoast.showToast(
+                                  msg: message,
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.SNACKBAR,
+                                  backgroundColor: Colors.black54,
+                                  textColor: Colors.white,
+                                  fontSize: 14.0,
+                                );
+                              } catch (e) {
+                                Fluttertoast.showToast(
+                                  msg: "Failed: $e",
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.SNACKBAR,
+                                  backgroundColor: Colors.black54,
+                                  textColor: Colors.white,
+                                  fontSize: 14.0,
+                                );
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(

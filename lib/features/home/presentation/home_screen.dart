@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:noted/features/auth/presentation/login_screen.dart';
 import 'package:noted/features/note/presentation/nota1.dart';
 import 'package:noted/features/note/presentation/nota2.dart';
 import 'package:noted/features/note/presentation/nota3.dart';
@@ -109,6 +112,26 @@ class HomeScreen extends StatelessWidget {
                   );
                 },
               ),
+            ),
+            IconButton(
+              onPressed: () async {
+                try {
+                  await FirebaseAuth.instance.signOut();
+                  Future.delayed(const Duration(seconds: 3), () {
+                    Navigator.pushReplacementNamed(context, '/login');
+                  });
+                } on Exception catch (e) {
+                  Fluttertoast.showToast(
+                    msg: e.toString(),
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.SNACKBAR,
+                    backgroundColor: Colors.black54,
+                    textColor: Colors.white,
+                    fontSize: 14.0,
+                  );
+                }
+              },
+              icon: const Icon(Icons.logout),
             ),
           ],
         ),
