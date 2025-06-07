@@ -136,6 +136,35 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: 'btnIA',
+            backgroundColor: const Color(0xFF6D28D9),
+            foregroundColor: Colors.white,
+            onPressed: () {
+              // TODO: Substitua com a navegação para a funcionalidade de IA
+              Fluttertoast.showToast(
+                  msg: 'Funcionalidade de IA ainda não implementada');
+            },
+            child: const Icon(Icons.smart_toy),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            heroTag: 'btnNovaNota',
+            backgroundColor: const Color(0xFF6D28D9),
+            foregroundColor: Colors.white,
+            onPressed: () {
+              // TODO: Substitua com a navegação para criar nova nota
+              Fluttertoast.showToast(
+                  msg: 'Criar nova nota ainda não implementado');
+            },
+            child: const Icon(Icons.add),
+          ),
+        ],
+      ),
     );
   }
 }
