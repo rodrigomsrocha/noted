@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:noted/services/firebase_service.dart';
 
 class CriarNota extends StatefulWidget {
@@ -12,6 +12,7 @@ class CriarNota extends StatefulWidget {
 class _CriarNotaState extends State<CriarNota> {
   final TextEditingController _tituloController = TextEditingController();
   final TextEditingController _textoController = TextEditingController();
+  QuillController _controller = QuillController.basic();
   String _grupoSelecionado = 'Pessoal';
 
   final List<String> _grupos = ['Pessoal', 'Trabalho', 'Estudos', 'Outros'];
@@ -27,12 +28,22 @@ class _CriarNotaState extends State<CriarNota> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0B0B14),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text('Nova Nota',style: TextStyle(color: Colors.purpleAccent, fontWeight: FontWeight.bold),),
+        title: const Text(
+          'Nova Nota',
+          style: TextStyle(
+              color: Colors.purpleAccent, fontWeight: FontWeight.bold),
+        ),
         iconTheme: const IconThemeData(color: Colors.purpleAccent),
         actions: [
           IconButton(
@@ -60,7 +71,8 @@ class _CriarNotaState extends State<CriarNota> {
               items: _grupos.map((String grupo) {
                 return DropdownMenuItem<String>(
                   value: grupo,
-                  child: Text(grupo, style: const TextStyle(color: Colors.white)),
+                  child:
+                      Text(grupo, style: const TextStyle(color: Colors.white)),
                 );
               }).toList(),
               onChanged: (String? novoGrupo) {
@@ -69,19 +81,57 @@ class _CriarNotaState extends State<CriarNota> {
                 });
               },
             ),
+            QuillSimpleToolbar(
+              controller: _controller,
+              config: const QuillSimpleToolbarConfig(),
+            ),
             Expanded(
-              child: TextField(
-                controller: _textoController,
-                maxLines: null,
-                expands: true,
-                style: const TextStyle(color: Colors.white70),
-                decoration: const InputDecoration(
-                  hintText: 'Escreva sua nota...',
-                  hintStyle: TextStyle(color: Colors.white38),
-                  border: InputBorder.none,
+              child: QuillEditor.basic(
+                controller: _controller,
+                config: const QuillEditorConfig(
+                  customStyles: DefaultStyles(
+                    paragraph: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 16),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    h1: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 24),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    h2: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 20),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    h3: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 18),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    quote: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 16),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    lists: DefaultListBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 16),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration(),
+                        null // Add the missing argument (e.g., null or appropriate value)
+                        ),
+                  ),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),

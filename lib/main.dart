@@ -6,6 +6,9 @@ import 'package:noted/features/auth/utils/auth_redirect.dart';
 import 'package:noted/features/auth/utils/public_guard.dart';
 import 'package:noted/features/home/presentation/home_screen.dart';
 
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -43,6 +46,12 @@ class MyApp extends StatelessWidget {
           body: Center(child: Text('Page not found')),
         ),
       ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        FlutterQuillLocalizations.delegate,
+      ]
     );
   }
 }
