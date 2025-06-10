@@ -1,223 +1,154 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:noted/features/auth/presentation/login_screen.dart';
-import 'package:noted/features/note/presentation/nota1.dart';
-import 'package:noted/features/note/presentation/nota2.dart';
-import 'package:noted/features/note/presentation/nota3.dart';
-import 'package:noted/features/note/presentation/nota4.dart';
+import 'package:noted/services/firebase_service.dart';
+import 'criar_nota.dart';
+import 'editar_nota.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final notes = [
-      {
-        'title': 'Hábito Saudável',
-        'preview':
-            'Guia Básico para Criar um Hábito Saudável 💪🍏 Defina um objetivo claro...',
-        'page': const NotaHabito(),
-      },
-      {
-        'title': 'Checklist de Viagem',
-        'preview':
-            'Documentos Importantes 📄 • Passaporte ou RG • Cartões de crédito...',
-        'page': const NotaViagem(),
-      },
-      {
-        'title': 'Dicas de Mindfulness',
-        'preview':
-            'Respiração Consciente 🌬️ Reserve alguns minutos por dia para focar...',
-        'page': const NotaMeditacao(),
-      },
-      {
-        'title': 'Plano de Estudos',
-        'preview':
-            'Organização Semanal 📆 Monte um cronograma simples para seus estudos...',
-        'page': NotaEstudos(),
-      },
-    ];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Row(
-          children: [
-            Icon(Icons.note_alt_outlined, color: Colors.purple),
-            SizedBox(width: 8),
-            Text(
-              'Noted!',
-              style: TextStyle(color: Colors.purple),
-            ),
-          ],
-        ),
-        backgroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.black,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    style: const TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      hintText: 'Search your notes',
-                      hintStyle: const TextStyle(color: Colors.white54),
-                      filled: true,
-                      fillColor: Colors.grey[850],
-                      prefixIcon:
-                          const Icon(Icons.search, color: Colors.white54),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                DropdownButton<String>(
-                  dropdownColor: Colors.grey[850],
-                  value: 'Estudos',
-                  items: const [
-                    DropdownMenuItem(value: 'Estudos', child: Text('Estudos')),
-                    DropdownMenuItem(value: 'Pessoal', child: Text('Pessoal')),
-                    DropdownMenuItem(
-                        value: 'Trabalho', child: Text('Trabalho')),
-                  ],
-                  onChanged: (value) {},
-                  style: const TextStyle(color: Colors.white),
-                  underline: Container(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 3 / 2,
-                ),
-                itemCount: notes.length,
-                itemBuilder: (context, index) {
-                  final note = notes[index];
-                  return NoteCard(
-                    title: note['title'] as String,
-                    preview: note['preview'] as String,
-                    page: note['page'] as Widget,
-                  );
-                },
-              ),
-            ),
-            IconButton(
-              onPressed: () async {
-                try {
-                  await FirebaseAuth.instance.signOut();
-                  Future.delayed(const Duration(seconds: 3), () {
-                    Navigator.pushReplacementNamed(context, '/login');
-                  });
-                } on Exception catch (e) {
-                  Fluttertoast.showToast(
-                    msg: e.toString(),
-                    toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.SNACKBAR,
-                    backgroundColor: Colors.black54,
-                    textColor: Colors.white,
-                    fontSize: 14.0,
-                  );
-                }
-              },
-              icon: const Icon(Icons.logout),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            heroTag: 'btnIA',
-            backgroundColor: const Color(0xFF6D28D9),
-            foregroundColor: Colors.white,
-            onPressed: () {
-              // TODO: Substitua com a navegação para a funcionalidade de IA
-              Fluttertoast.showToast(
-                  msg: 'Funcionalidade de IA ainda não implementada');
-            },
-            child: const Icon(Icons.smart_toy),
-          ),
-          const SizedBox(height: 12),
-          FloatingActionButton(
-            heroTag: 'btnNovaNota',
-            backgroundColor: const Color(0xFF6D28D9),
-            foregroundColor: Colors.white,
-            onPressed: () {
-              // TODO: Substitua com a navegação para criar nova nota
-              Fluttertoast.showToast(
-                  msg: 'Criar nova nota ainda não implementado');
-            },
-            child: const Icon(Icons.add),
-          ),
-        ],
-      ),
-    );
-  }
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class NoteCard extends StatelessWidget {
-  final String title;
-  final String preview;
-  final Widget page;
+class _HomeScreenState extends State<HomeScreen> {
+  final firebaseService = FirebaseService();
+  List<Map<String, dynamic>> _notas = [];
+  String _grupoSelecionado = 'Todos';
+  final List<String> _grupos = [
+    'Todos',
+    'Pessoal',
+    'Trabalho',
+    'Estudos',
+    'Outros'
+  ];
+  bool _carregandoNotas = false;
+  @override
+  void initState() {
+    super.initState();
+    carregarNotas();
+  }
 
-  const NoteCard(
-      {super.key,
-      required this.title,
-      required this.preview,
-      required this.page});
+  Future<void> carregarNotas() async {
+    final notas = await firebaseService.buscarTodasNotas();
+    setState(() {
+      _notas = notas;
+    });
+  }
+
+  Future<void> filtrarPorGrupo(String grupo) async {
+    setState(() {
+      _carregandoNotas = true;
+      _grupoSelecionado = grupo;
+    });
+
+    // Aguarda o stream atualizar automaticamente
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    setState(() {
+      _carregandoNotas = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => page),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[850],
-          borderRadius: BorderRadius.circular(12),
+    return Scaffold(
+      backgroundColor: const Color(0xFF0B0B14),
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        leading: IconButton(
+          icon: const Icon(Icons.menu, color: Colors.purpleAccent),
+          onPressed: () {},
         ),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              preview,
-              style: const TextStyle(
-                color: Colors.white70,
-              ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+        title: const Text(
+          'Minhas Notas',
+          style: TextStyle(
+              color: Colors.purpleAccent, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          DropdownButton<String>(
+            dropdownColor: Colors.grey[900],
+            value: _grupoSelecionado,
+            hint: const Text('Grupo', style: TextStyle(color: Colors.white)),
+            items: _grupos.map((String grupo) {
+              return DropdownMenuItem<String>(
+                value: grupo,
+                child: Text(grupo, style: const TextStyle(color: Colors.white)),
+              );
+            }).toList(),
+            onChanged: (String? novoGrupo) {
+              if (novoGrupo != null) {
+                filtrarPorGrupo(novoGrupo);
+              }
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.purpleAccent),
+            onPressed: carregarNotas,
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.purpleAccent,
+        onPressed: () async {
+          await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const CriarNota()),
+          );
+          carregarNotas();
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: Column(
+        children: [
+          if (_carregandoNotas)
+            const LinearProgressIndicator(
+              backgroundColor: Colors.transparent,
+              color: Colors.purpleAccent,
+            ),
+          Expanded(
+            child: StreamBuilder<List<Map<String, dynamic>>>(
+              stream: firebaseService.streamNotasPorGrupo(_grupoSelecionado),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(
+                    child: Text('Nenhuma nota encontrada.',
+                        style: TextStyle(color: Colors.white70)),
+                  );
+                }
+
+                final notas = snapshot.data!;
+                return ListView.builder(
+                  itemCount: notas.length,
+                  itemBuilder: (context, index) {
+                    final nota = notas[index];
+                    return Card(
+                      color: Colors.grey[850],
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      child: ListTile(
+                        title: Text(nota['titulo'],
+                            style: const TextStyle(color: Colors.white)),
+                        subtitle: Text(nota['grupo'],
+                            style: const TextStyle(color: Colors.white54)),
+                        onTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => NotaHabito(nota: nota)),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
