@@ -77,5 +77,4 @@ class DefaultFirebaseOptions {
     authDomain: 'noted-3640a.firebaseapp.com',
     storageBucket: 'noted-3640a.firebasestorage.app',
   );
-
 }

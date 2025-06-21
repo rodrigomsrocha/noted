@@ -10,11 +10,12 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -27,31 +28,30 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Your App Name',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      initialRoute: '/', // or '/home' if you have auth state management
-      routes: {
-        '/': (context) => AuthRedirect(),
-        '/login': (context) => PublicGuard(child: LoginScreen()),
-        '/signup': (context) => PublicGuard(child: SignupScreen()),
-        '/home': (context) => AuthGuard(child: HomeScreen()),
-        // Add other screen routes here
-      },
-      // Optional: If you want to handle unknown routes
-      onUnknownRoute: (settings) => MaterialPageRoute(
-        builder: (context) => Scaffold(
-          body: Center(child: Text('Page not found')),
+        title: 'Your App Name',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-      ),
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        FlutterQuillLocalizations.delegate,
-      ]
-    );
+        initialRoute: '/', // or '/home' if you have auth state management
+        routes: {
+          '/': (context) => AuthRedirect(),
+          '/login': (context) => PublicGuard(child: LoginScreen()),
+          '/signup': (context) => PublicGuard(child: SignupScreen()),
+          '/home': (context) => AuthGuard(child: HomeScreen()),
+          // Add other screen routes here
+        },
+        // Optional: If you want to handle unknown routes
+        onUnknownRoute: (settings) => MaterialPageRoute(
+              builder: (context) => Scaffold(
+                body: Center(child: Text('Page not found')),
+              ),
+            ),
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          FlutterQuillLocalizations.delegate,
+        ]);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noted/services/firebase_service.dart';
+import 'package:noted/widgets/ai_chat_widget.dart';
 import 'criar_nota.dart';
 import 'editar_nota.dart';
 
@@ -87,17 +88,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.purpleAccent,
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const CriarNota()),
-          );
-          carregarNotas();
-        },
-        child: const Icon(Icons.add),
-      ),
       body: Column(
         children: [
           if (_carregandoNotas)
@@ -147,6 +137,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
+          ),
+        ],
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 10,
+        children: [
+          AiChat(),
+          FloatingActionButton(
+            backgroundColor: Colors.purpleAccent,
+            child: const Icon(Icons.add, color: Colors.white),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CriarNota()),
+              );
+              carregarNotas(); // Recarrega as notas após criar uma nova
+            },
           ),
         ],
       ),
