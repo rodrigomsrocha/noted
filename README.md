@@ -36,22 +36,23 @@ This project was developed as part of the **Mobile Devices Laboratory(Computer S
 ## 📲 Installation
 
 1. **Clone this repository**  
-bash
-  git clone https://github.com/your-username/noted.git
-  cd noted
+<pre>  git clone https://github.com/your-username/noted.git
+  cd noted   </pre>
 
 2. **Install dependencies**
-bash
+<pre>
   flutter pub get
-  Configure Firebase
+</pre>
 
-3. **Add your google-services.json (Android) or GoogleService-Info.plist (iOS) to the appropriate platform folder.**
+3.  **Configure Firebase:** 
+ Add your google-services.json (Android) or GoogleService-Info.plist (iOS) to the appropriate platform folder.
 
-4. **Make sure your Firebase project has Authentication and Firestore enabled.**
+5. **Make sure your Firebase project has Authentication and Firestore enabled.**
 
-5. **Run the app**
-bash
+6. **Run the app**
+<pre>
   flutter run
+</pre>
 
 
 ## 📚 License
