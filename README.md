@@ -25,10 +25,17 @@ This project was developed as part of the **Mobile Devices Laboratory(Computer S
 
 ---
 
+## 👨‍💻 Authors
+- Ana Clara Iannini R. Duarte – AI integration (Hugging Face / DeepSeek)
+- Marcos Eduardo M. Araujo – Firebase database
+- Priscila A. de Moraes – Firebase database
+- Rodrigo – UI Design (Figma) and app navigation
+
+---
+
 ## 📲 Installation
 
 1. **Clone this repository**  
-   
 git clone https://github.com/your-username/noted.git
 cd noted
 
@@ -43,11 +50,6 @@ Configure Firebase
 5. **Run the app**
 flutter run
 
-## 👨‍💻 Authors
-- Ana Clara Iannini R. Duarte – AI integration (Hugging Face / DeepSeek)
-- Marcos Eduardo M. Araujo – Firebase database
-- Priscila A. de Moraes – Firebase database
-- Rodrigo – UI Design (Figma) and app navigation
 
 ## 📚 License
 This project is intended for academic purposes only and does not currently include an open-source license.
