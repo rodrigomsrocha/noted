@@ -1,16 +1,34 @@
-# noted
+# 📝 Noted
 
-A new Flutter project.
+**Noted** is a smart note-taking app built with **Flutter**, enhanced by **Artificial Intelligence** to assist users in writing, summarizing, and organizing their thoughts more efficiently.
 
-## Getting Started
+This project was developed as part of the **Mobile Devices Laboratory course** at **PUC Minas**.
 
-This project is a starting point for a Flutter application.
+---
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- 📋 Create and manage personal notes
+- 🧠 AI-powered suggestions and summaries using the [Hugging Face](https://huggingface.co/) API (DeepSeek model)
+- ☁️ Cloud data synchronization with **Firebase**
+- 📱 Clean and intuitive UI designed in **Figma**
+- 🔐 Secure and user-friendly experience
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## 🛠️ Tech Stack
+
+- **Flutter** – for building the cross-platform mobile app  
+- **Firebase** – for authentication and real-time database  
+- **Hugging Face API (DeepSeek model)** – for integrating AI-powered features  
+- **Figma** – for prototyping UI and user flows
+
+---
+
+## 📲 Installation
+
+1. **Clone this repository**  
+   ```bash
+   git clone https://github.com/your-username/noted.git
+   cd noted
+
