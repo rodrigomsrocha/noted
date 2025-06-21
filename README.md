@@ -36,10 +36,12 @@ This project was developed as part of the **Mobile Devices Laboratory(Computer S
 ## 📲 Installation
 
 1. **Clone this repository**  
+bash
 git clone https://github.com/your-username/noted.git
 cd noted
 
 2. **Install dependencies**
+bash
 flutter pub get
 Configure Firebase
 
@@ -48,6 +50,7 @@ Configure Firebase
 4. **Make sure your Firebase project has Authentication and Firestore enabled.**
 
 5. **Run the app**
+bash
 flutter run
 
 
