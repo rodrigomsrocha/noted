@@ -28,7 +28,27 @@ This project was developed as part of the **Mobile Devices Laboratory(Computer S
 ## 📲 Installation
 
 1. **Clone this repository**  
-   ```bash
-   git clone https://github.com/your-username/noted.git
-   cd noted
+   
+git clone https://github.com/your-username/noted.git
+cd noted
+
+2. **Install dependencies**
+flutter pub get
+Configure Firebase
+
+3. **Add your google-services.json (Android) or GoogleService-Info.plist (iOS) to the appropriate platform folder.**
+
+4. **Make sure your Firebase project has Authentication and Firestore enabled.**
+
+5. **Run the app**
+flutter run
+
+## 👨‍💻 Authors
+- Ana Clara Iannini R. Duarte – AI integration (Hugging Face / DeepSeek)
+- Marcos Eduardo M. Araujo – Firebase database
+- Priscila A. de Moraes – Firebase database
+- Rodrigo – UI Design (Figma) and app navigation
+
+## 📚 License
+This project is intended for academic purposes only and does not currently include an open-source license.
 
