@@ -37,13 +37,13 @@ This project was developed as part of the **Mobile Devices Laboratory(Computer S
 
 1. **Clone this repository**  
 bash
-git clone https://github.com/your-username/noted.git
-cd noted
+  git clone https://github.com/your-username/noted.git
+  cd noted
 
 2. **Install dependencies**
 bash
-flutter pub get
-Configure Firebase
+  flutter pub get
+  Configure Firebase
 
 3. **Add your google-services.json (Android) or GoogleService-Info.plist (iOS) to the appropriate platform folder.**
 
@@ -51,7 +51,7 @@ Configure Firebase
 
 5. **Run the app**
 bash
-flutter run
+  flutter run
 
 
 ## 📚 License
