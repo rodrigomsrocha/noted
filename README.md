@@ -1,15 +1,15 @@
 # 📝 Noted
 
-**Noted** is a smart note-taking app built with **Flutter**, enhanced by **Artificial Intelligence** to assist users in writing, summarizing, and organizing their thoughts more efficiently.
+**Noted** is a smart note-taking app built with **Flutter**, enhanced by **Artificial Intelligence** to assist users in writing.
 
-This project was developed as part of the **Mobile Devices Laboratory course** at **PUC Minas**.
+This project was developed as part of the **Mobile Devices Laboratory(Computer Science Major)** at **PUC Minas**.
 
 ---
 
 ## 🚀 Features
 
 - 📋 Create and manage personal notes
-- 🧠 AI-powered suggestions and summaries using the [Hugging Face](https://huggingface.co/) API (DeepSeek model)
+- 🧠 AI-powered implementation [Hugging Face](https://huggingface.co/) API (DeepSeek model)
 - ☁️ Cloud data synchronization with **Firebase**
 - 📱 Clean and intuitive UI designed in **Figma**
 - 🔐 Secure and user-friendly experience
