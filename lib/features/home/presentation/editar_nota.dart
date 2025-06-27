@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter_quill/flutter_quill.dart';
 
 import 'package:flutter/material.dart';
 import 'package:noted/services/firebase_service.dart';
@@ -15,17 +18,18 @@ class _NotaHabitoState extends State<NotaHabito> {
   final firebaseService = FirebaseService();
 
   late TextEditingController _tituloController;
-  late TextEditingController _textoController;
   late String _grupoSelecionado;
   bool _modoEdicao = false;
+  final QuillController _controller = QuillController.basic();
 
   final List<String> _gruposDisponiveis = ['Pessoal', 'Trabalho', 'Estudos', 'Outros'];
 
   @override
   void initState() {
     super.initState();
+    _controller.document = Document.fromJson(jsonDecode(widget.nota['texto']));
+    _controller.readOnly = true;
     _tituloController = TextEditingController(text: widget.nota['titulo']);
-    _textoController = TextEditingController(text: widget.nota['texto']);
     _grupoSelecionado = widget.nota['grupo'];
   }
 
@@ -33,7 +37,7 @@ class _NotaHabitoState extends State<NotaHabito> {
     await firebaseService.atualizarNota(
       id: widget.nota['id'],
       titulo: _tituloController.text,
-      texto: _textoController.text,
+      texto: jsonEncode(_controller.document.toDelta().toJson()),
       grupo: _grupoSelecionado,
     );
 
@@ -58,6 +62,7 @@ class _NotaHabitoState extends State<NotaHabito> {
           IconButton(
             icon: Icon(_modoEdicao ? Icons.save : Icons.edit, color: Colors.purpleAccent),
             onPressed: () {
+              _controller.readOnly = !_controller.readOnly;
               if (_modoEdicao) {
                 salvarAlteracoes();
               } else {
@@ -113,21 +118,57 @@ class _NotaHabitoState extends State<NotaHabito> {
                     style: const TextStyle(color: Colors.white70),
                   ),
             const SizedBox(height: 16),
-            _modoEdicao
-                ? TextField(
-                    controller: _textoController,
-                    maxLines: null,
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
-                    decoration: const InputDecoration(
-                      hintText: 'Digite o conteúdo da nota...',
-                      hintStyle: TextStyle(color: Colors.white38),
-                      border: InputBorder.none,
-                    ),
-                  )
-                : Text(
-                    widget.nota['texto'],
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+            _modoEdicao ? QuillSimpleToolbar(
+              controller: _controller,
+              config: const QuillSimpleToolbarConfig(),
+            ) : const SizedBox(),
+            Expanded(
+              child: QuillEditor.basic(
+                controller: _controller,
+                config: const QuillEditorConfig(
+                  customStyles: DefaultStyles(
+                    paragraph: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 16),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    h1: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 24),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    h2: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 20),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    h3: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 18),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    quote: DefaultTextBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 16),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration()),
+                    lists: DefaultListBlockStyle(
+                        TextStyle(color: Colors.white, fontSize: 16),
+                        HorizontalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        VerticalSpacing(0, 0),
+                        BoxDecoration(),
+                        null // Add the missing argument (e.g., null or appropriate value)
+                        ),
                   ),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             if (widget.nota['imagemUrl'] != null)
               ClipRRect(

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:noted/services/firebase_service.dart';
@@ -11,8 +14,7 @@ class CriarNota extends StatefulWidget {
 
 class _CriarNotaState extends State<CriarNota> {
   final TextEditingController _tituloController = TextEditingController();
-  final TextEditingController _textoController = TextEditingController();
-  QuillController _controller = QuillController.basic();
+  final QuillController _controller = QuillController.basic();
   String _grupoSelecionado = 'Pessoal';
 
   final List<String> _grupos = ['Pessoal', 'Trabalho', 'Estudos', 'Outros'];
@@ -21,7 +23,7 @@ class _CriarNotaState extends State<CriarNota> {
   Future<void> salvarNota() async {
     await firebaseService.salvarNota(
       titulo: _tituloController.text,
-      texto: _textoController.text,
+      texto: jsonEncode(_controller.document.toDelta().toJson()),
       grupo: _grupoSelecionado,
     );
     Navigator.pop(context); // Volta para a HomeScreen
@@ -83,7 +85,35 @@ class _CriarNotaState extends State<CriarNota> {
             ),
             QuillSimpleToolbar(
               controller: _controller,
-              config: const QuillSimpleToolbarConfig(),
+              config: const QuillSimpleToolbarConfig(
+                  buttonOptions: QuillSimpleToolbarButtonOptions(
+                    base: QuillToolbarBaseButtonOptions(
+                      iconTheme: QuillIconTheme(
+                        iconButtonUnselectedData: IconButtonData(
+                          color: Colors.white,
+                          disabledColor: CupertinoColors.inactiveGray
+                        )
+                      )
+                    ),
+                    selectHeaderStyleDropdownButton: QuillToolbarSelectHeaderStyleDropdownButtonOptions(
+                      textStyle: TextStyle(color: Colors.white)
+                    ),
+                    fontSize: QuillToolbarFontSizeButtonOptions(
+                      style: TextStyle(color: Colors.white)
+                    ),
+                    fontFamily: QuillToolbarFontFamilyButtonOptions(
+                      style: TextStyle(color: Colors.white)
+                    )
+                  ),
+                  // Configuração dos botões (opcional)
+                  showSuperscript: false,
+                  showSubscript: false,
+                  showQuote: false,
+                  showClearFormat: false,
+                  showCodeBlock: false,
+                  showIndent: false,
+                  showSearchButton: false,
+                  showLink: false),
             ),
             Expanded(
               child: QuillEditor.basic(
@@ -126,7 +156,7 @@ class _CriarNotaState extends State<CriarNota> {
                         VerticalSpacing(0, 0),
                         VerticalSpacing(0, 0),
                         BoxDecoration(),
-                        null // Add the missing argument (e.g., null or appropriate value)
+                        null
                         ),
                   ),
                 ),
