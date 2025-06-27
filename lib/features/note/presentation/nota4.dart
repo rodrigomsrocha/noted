@@ -2,6 +2,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 
 class NotaEstudos extends StatefulWidget {
+  const NotaEstudos({super.key});
+
   @override
   _NotaEstudosState createState() => _NotaEstudosState();
 }

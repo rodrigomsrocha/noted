@@ -5,7 +5,7 @@ import 'package:noted/features/home/presentation/home_screen.dart';
 class AuthGuard extends StatelessWidget {
   final Widget child;
 
-  const AuthGuard({required this.child});
+  const AuthGuard({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

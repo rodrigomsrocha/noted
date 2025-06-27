@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class PublicGuard extends StatelessWidget {
   final Widget child;
 
-  const PublicGuard({required this.child});
+  const PublicGuard({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:noted/features/home/presentation/home_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final _emailController = TextEditingController();
