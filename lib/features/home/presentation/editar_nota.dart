@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_quill/flutter_quill.dart';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:noted/services/firebase_service.dart';
 
@@ -22,7 +22,12 @@ class _NotaHabitoState extends State<NotaHabito> {
   bool _modoEdicao = false;
   final QuillController _controller = QuillController.basic();
 
-  final List<String> _gruposDisponiveis = ['Pessoal', 'Trabalho', 'Estudos', 'Outros'];
+  final List<String> _gruposDisponiveis = [
+    'Pessoal',
+    'Trabalho',
+    'Estudos',
+    'Outros'
+  ];
 
   @override
   void initState() {
@@ -39,6 +44,7 @@ class _NotaHabitoState extends State<NotaHabito> {
       titulo: _tituloController.text,
       texto: jsonEncode(_controller.document.toDelta().toJson()),
       grupo: _grupoSelecionado,
+      imagemUrl: widget.nota['imagemUrl']
     );
 
     Navigator.pop(context);
@@ -56,11 +62,13 @@ class _NotaHabitoState extends State<NotaHabito> {
         ),
         title: const Text(
           'Noted!',
-          style: TextStyle(color: Colors.purpleAccent, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.purpleAccent, fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
-            icon: Icon(_modoEdicao ? Icons.save : Icons.edit, color: Colors.purpleAccent),
+            icon: Icon(_modoEdicao ? Icons.save : Icons.edit,
+                color: Colors.purpleAccent),
             onPressed: () {
               _controller.readOnly = !_controller.readOnly;
               if (_modoEdicao) {
@@ -104,7 +112,8 @@ class _NotaHabitoState extends State<NotaHabito> {
                     items: _gruposDisponiveis.map((String grupo) {
                       return DropdownMenuItem<String>(
                         value: grupo,
-                        child: Text(grupo, style: const TextStyle(color: Colors.white)),
+                        child: Text(grupo,
+                            style: const TextStyle(color: Colors.white)),
                       );
                     }).toList(),
                     onChanged: (String? novoGrupo) {
@@ -118,10 +127,35 @@ class _NotaHabitoState extends State<NotaHabito> {
                     style: const TextStyle(color: Colors.white70),
                   ),
             const SizedBox(height: 16),
-            _modoEdicao ? QuillSimpleToolbar(
-              controller: _controller,
-              config: const QuillSimpleToolbarConfig(),
-            ) : const SizedBox(),
+            _modoEdicao
+                ? QuillSimpleToolbar(
+                    controller: _controller,
+                    config: const QuillSimpleToolbarConfig(
+                        buttonOptions: QuillSimpleToolbarButtonOptions(
+                            base: QuillToolbarBaseButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: Colors.white,
+                                        disabledColor:
+                                            CupertinoColors.inactiveGray))),
+                            selectHeaderStyleDropdownButton:
+                                QuillToolbarSelectHeaderStyleDropdownButtonOptions(
+                                    textStyle: TextStyle(color: Colors.white)),
+                            fontSize: QuillToolbarFontSizeButtonOptions(
+                                style: TextStyle(color: Colors.white)),
+                            fontFamily: QuillToolbarFontFamilyButtonOptions(
+                                style: TextStyle(color: Colors.white))),
+                        // Configuração dos botões (opcional)
+                        showSuperscript: false,
+                        showSubscript: false,
+                        showQuote: false,
+                        showClearFormat: false,
+                        showCodeBlock: false,
+                        showIndent: false,
+                        showSearchButton: false,
+                        showLink: false),
+                  )
+                : const SizedBox(),
             Expanded(
               child: QuillEditor.basic(
                 controller: _controller,
@@ -163,20 +197,18 @@ class _NotaHabitoState extends State<NotaHabito> {
                         VerticalSpacing(0, 0),
                         VerticalSpacing(0, 0),
                         BoxDecoration(),
-                        null // Add the missing argument (e.g., null or appropriate value)
-                        ),
+                        null),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
             if (widget.nota['imagemUrl'] != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  widget.nota['imagemUrl'],
-                  fit: BoxFit.contain,
-                  height: 300,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(widget.nota['imagemUrl'], height: 200),
                 ),
               ),
           ],

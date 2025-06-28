@@ -1,8 +1,27 @@
- import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 class FirebaseService {
   final CollectionReference _notasRef =
       FirebaseFirestore.instance.collection('notas');
+
+  Future<String?> uploadImagem(String base64Image) async {
+    final apiKey = dotenv.env['IMGBB_API_KEY'] ?? '';
+    final url = Uri.parse('https://api.imgbb.com/1/upload?key=$apiKey');
+
+    final response = await http.post(url, body: {
+      'image': base64Image,
+    });
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return json['data']['url'];
+    } else {
+      print('Erro ao enviar imagem: ${response.body}');
+      return null;
+    }
+  }
 
   // Criar uma nova nota
   Future<void> salvarNota({

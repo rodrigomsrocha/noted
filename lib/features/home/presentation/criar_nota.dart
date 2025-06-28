@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -20,13 +21,33 @@ class _CriarNotaState extends State<CriarNota> {
   final List<String> _grupos = ['Pessoal', 'Trabalho', 'Estudos', 'Outros'];
   final firebaseService = FirebaseService();
 
+  String? imagemUrl;
+
   Future<void> salvarNota() async {
     await firebaseService.salvarNota(
       titulo: _tituloController.text,
       texto: jsonEncode(_controller.document.toDelta().toJson()),
+      imagemUrl: imagemUrl,
       grupo: _grupoSelecionado,
     );
     Navigator.pop(context); // Volta para a HomeScreen
+  }
+
+  Future<void> selecionarImagem() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.image);
+
+    if (result != null) {
+      final bytes = result.files.first.bytes;
+      if (bytes != null) {
+        final base64Image = base64Encode(bytes);
+        final url = await firebaseService.uploadImagem(base64Image);
+        if (url != null) {
+          setState(() {
+            imagemUrl = url;
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -87,24 +108,19 @@ class _CriarNotaState extends State<CriarNota> {
               controller: _controller,
               config: const QuillSimpleToolbarConfig(
                   buttonOptions: QuillSimpleToolbarButtonOptions(
-                    base: QuillToolbarBaseButtonOptions(
-                      iconTheme: QuillIconTheme(
-                        iconButtonUnselectedData: IconButtonData(
-                          color: Colors.white,
-                          disabledColor: CupertinoColors.inactiveGray
-                        )
-                      )
-                    ),
-                    selectHeaderStyleDropdownButton: QuillToolbarSelectHeaderStyleDropdownButtonOptions(
-                      textStyle: TextStyle(color: Colors.white)
-                    ),
-                    fontSize: QuillToolbarFontSizeButtonOptions(
-                      style: TextStyle(color: Colors.white)
-                    ),
-                    fontFamily: QuillToolbarFontFamilyButtonOptions(
-                      style: TextStyle(color: Colors.white)
-                    )
-                  ),
+                      base: QuillToolbarBaseButtonOptions(
+                          iconTheme: QuillIconTheme(
+                              iconButtonUnselectedData: IconButtonData(
+                                  color: Colors.white,
+                                  disabledColor:
+                                      CupertinoColors.inactiveGray))),
+                      selectHeaderStyleDropdownButton:
+                          QuillToolbarSelectHeaderStyleDropdownButtonOptions(
+                              textStyle: TextStyle(color: Colors.white)),
+                      fontSize: QuillToolbarFontSizeButtonOptions(
+                          style: TextStyle(color: Colors.white)),
+                      fontFamily: QuillToolbarFontFamilyButtonOptions(
+                          style: TextStyle(color: Colors.white))),
                   // Configuração dos botões (opcional)
                   showSuperscript: false,
                   showSubscript: false,
@@ -156,12 +172,27 @@ class _CriarNotaState extends State<CriarNota> {
                         VerticalSpacing(0, 0),
                         VerticalSpacing(0, 0),
                         BoxDecoration(),
-                        null
-                        ),
+                        null),
                   ),
                 ),
               ),
-            )
+            ),
+            if (imagemUrl != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(imagemUrl!, height: 200),
+                ),
+              ),
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.image, color: Colors.purpleAccent),
+                  onPressed: selecionarImagem,
+                )
+              ],
+            ),
           ],
         ),
       ),
