@@ -99,4 +99,8 @@ class FirebaseService {
       }).toList();
     });
   }
+
+  Future<void> deletarNota(String id) async {
+    await _notasRef.doc(id).delete();
+  }
 }

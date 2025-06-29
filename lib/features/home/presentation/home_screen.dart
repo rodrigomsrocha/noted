@@ -131,6 +131,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (_) => NotaHabito(nota: nota)),
                           );
                         },
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Confirmar Exclusão'),
+                                content: const Text(
+                                    'Tem certeza que deseja excluir esta nota?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: const Text('Cancelar'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: const Text('Excluir'),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirm == true) {
+                              await firebaseService.deletarNota(nota['id']);
+                            }
+                          },
+                        ),
                       ),
                     );
                   },
