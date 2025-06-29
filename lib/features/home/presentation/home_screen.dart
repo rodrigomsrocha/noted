@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noted/services/firebase_service.dart';
 import 'package:noted/widgets/ai_chat_widget.dart';
@@ -56,10 +57,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFF0B0B14),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: Colors.purpleAccent),
-          onPressed: () {},
-        ),
         title: const Text(
           'Minhas Notas',
           style: TextStyle(
@@ -83,8 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.purpleAccent),
-            onPressed: carregarNotas,
+            icon: const Icon(Icons.logout, color: Colors.redAccent),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),

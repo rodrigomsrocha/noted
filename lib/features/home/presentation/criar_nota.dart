@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:noted/services/firebase_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CriarNota extends StatefulWidget {
   const CriarNota({super.key});
@@ -24,7 +25,14 @@ class _CriarNotaState extends State<CriarNota> {
   String? imagemUrl;
 
   Future<void> salvarNota() async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      throw Exception('Usuário não autenticado');
+    }
+
     await firebaseService.salvarNota(
+      uid: user.uid,
       titulo: _tituloController.text,
       texto: jsonEncode(_controller.document.toDelta().toJson()),
       imagemUrl: imagemUrl,

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+
 class FirebaseService {
   final CollectionReference _notasRef =
       FirebaseFirestore.instance.collection('notas');
@@ -25,6 +27,7 @@ class FirebaseService {
 
   // Criar uma nova nota
   Future<void> salvarNota({
+    required String uid,
     required String titulo,
     required String texto,
     required String grupo,
@@ -35,7 +38,7 @@ class FirebaseService {
       'texto': texto,
       'grupo': grupo,
       'imagemUrl': imagemUrl,
-      'dataCriacao': DateTime.now().toIso8601String(),
+      'uid': uid,
     };
 
     await _notasRef.add(nota);
@@ -61,8 +64,14 @@ class FirebaseService {
 
   // Buscar todas as notas
   Future<List<Map<String, dynamic>>> buscarTodasNotas() async {
-    final snapshot =
-        await _notasRef.orderBy('dataCriacao', descending: true).get();
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      throw Exception('Usuário não autenticado');
+    }
+
+    final snapshot = await _notasRef.where('uid', isEqualTo: user.uid).get();
+
     return snapshot.docs.map((doc) {
       final data = doc.data() as Map<String, dynamic>;
       data['id'] = doc.id;
@@ -72,9 +81,15 @@ class FirebaseService {
 
   // Buscar notas por grupo
   Future<List<Map<String, dynamic>>> buscarNotasPorGrupo(String grupo) async {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      throw Exception('Usuário não autenticado');
+    }
+
     final snapshot = await _notasRef
+        .where('uid', isEqualTo: user.uid)
         .where('grupo', isEqualTo: grupo)
-        .orderBy('dataCriacao', descending: true)
         .get();
 
     return snapshot.docs.map((doc) {
@@ -85,7 +100,13 @@ class FirebaseService {
   }
 
   Stream<List<Map<String, dynamic>>> streamNotasPorGrupo(String? grupo) {
-    Query query = _notasRef.orderBy('dataCriacao', descending: true);
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      throw Exception('Usuário não autenticado');
+    }
+
+    Query query = _notasRef.where('uid', isEqualTo: user.uid);
 
     if (grupo != null && grupo != 'Todos') {
       query = query.where('grupo', isEqualTo: grupo);
